@@ -49,7 +49,7 @@
     .shape-cell {
       aspect-ratio: 1 / 1;
       overflow: hidden;
-      /*border: 1px solid #eee; /* optional; remove if you want no lines */
+      border: 1px solid #eee; /* optional; remove if you want no lines */
     }
 
     .shape-cell img {
@@ -70,7 +70,7 @@
       id="shapeCount"
       min="1"
       max="500"
-      value="12"
+      value="18"
     />
     <button id="generateBtn">Generate Grid</button>
   </div>
@@ -78,7 +78,7 @@
   <div id="shape-grid"></div>
 
   <script>
-    const TOTAL_SHAPES = 12;
+    const TOTAL_SHAPES = 12; // shape1.svg through shape12.svg
     const PATH = "shapes/";
 
     const shapeCountInput = document.getElementById("shapeCount");
