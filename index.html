@@ -3,57 +3,136 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Random Shape Generator</title>
+  <title>Random Shape Sequence Grid</title>
+
   <style>
     body {
+      margin: 0;
+      padding: 20px;
       font-family: Arial, sans-serif;
+      background: #ffffff;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      margin-top: 0;
       text-align: center;
-      padding: 40px;
     }
 
-    #shape-container {
-      width: 300px;
-      height: 300px;
-      margin: 20px auto;
+    .controls {
       display: flex;
-      align-items: center;
       justify-content: center;
-      border: 1px solid #ccc;
-      overflow: hidden;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
     }
 
-    #shape-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
+    input[type="number"] {
+      width: 100px;
+      padding: 8px;
+      font-size: 16px;
     }
 
     button {
-      padding: 12px 20px;
+      padding: 10px 18px;
       font-size: 16px;
       cursor: pointer;
+    }
+
+    #shape-grid {
+      display: grid;
+      gap: 0;
+      width: 100%;
+    }
+
+    .shape-cell {
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      border: 1px solid #eee; /* optional; remove if you want no lines */
+    }
+
+    .shape-cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* shows full square SVG without cropping */
+      display: block;
     }
   </style>
 </head>
 <body>
-  <h1>Random Shape Generator</h1>
+  <h1>Random Shape Sequence Grid</h1>
 
-  <div id="shape-container">
-    <img id="shape-image" src="shapes/shape1.svg" alt="Random shape" />
+  <div class="controls">
+    <label for="shapeCount">Number of Shapes:</label>
+    <input
+      type="number"
+      id="shapeCount"
+      min="1"
+      max="500"
+      value="18"
+    />
+    <button id="generateBtn">Generate Grid</button>
   </div>
 
-  <button id="random-btn">Show Random Shape</button>
+  <div id="shape-grid"></div>
 
   <script>
-    const shapeImage = document.getElementById("shape-image");
-    const button = document.getElementById("random-btn");
+    const TOTAL_SHAPES = 36; // shape1.svg through shape36.svg
+    const PATH = "shapes/";
 
-    button.addEventListener("click", () => {
-      const randomNumber = Math.floor(Math.random() * 36) + 1;
-      shapeImage.src = `shapes/shape${randomNumber}.svg`;
-      shapeImage.alt = `Shape ${randomNumber}`;
+    const shapeCountInput = document.getElementById("shapeCount");
+    const generateBtn = document.getElementById("generateBtn");
+    const shapeGrid = document.getElementById("shape-grid");
+
+    function getRandomShapeNumber() {
+      return Math.floor(Math.random() * TOTAL_SHAPES) + 1;
+    }
+
+    function generateGrid() {
+      const count = Math.max(
+        1,
+        parseInt(shapeCountInput.value, 10) || 1
+      );
+
+      // Choose a roughly square layout:
+      // columns = ceil(sqrt(count))
+      const columns = Math.ceil(Math.sqrt(count));
+
+      // Apply the column layout
+      shapeGrid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+
+      // Clear previous shapes
+      shapeGrid.innerHTML = "";
+
+      // Add random shapes
+      for (let i = 0; i < count; i++) {
+        const shapeNumber = getRandomShapeNumber();
+
+        const cell = document.createElement("div");
+        cell.className = "shape-cell";
+
+        const img = document.createElement("img");
+        img.src = `${PATH}shape${shapeNumber}.svg?v=${Date.now()}-${i}`;
+        img.alt = `Shape ${shapeNumber}`;
+
+        cell.appendChild(img);
+        shapeGrid.appendChild(cell);
+      }
+    }
+
+    // Button click
+    generateBtn.addEventListener("click", generateGrid);
+
+    // Press Enter in the input field
+    shapeCountInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        generateGrid();
+      }
     });
+
+    // Generate an initial grid on page load
+    generateGrid();
   </script>
 </body>
 </html>
